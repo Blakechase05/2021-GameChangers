@@ -10,8 +10,9 @@ double lastTimeStamp;
 double dt; //stands for delta time 
 
 //add other variables here
-double sparkSpeed;
-double talonSpeed;
+//double sparkSpeed;
+double dbLeftspeed;
+double dbRightspeed;
 double constexpr deadzone = 0.1;
 
 // Robot Logic
@@ -20,16 +21,22 @@ void Robot::RobotInit() {
 	xbox = new frc::XboxController(0);
 
 	//Motor examples 
-	_sparkMotor = new frc::Spark(0);
-	_talonMotor = new wml::TalonSrx(1);
+	//	_sparkMotor = new frc::Spark(0);
+	_talonMotorL = new wml::TalonSrx(1);
+	_talonMotorR = new wml::TalonSrx(2);
+	_victorMotorL = new wml::VictorSpx(8);
+	_victorMotorR = new wml::VictorSpx(9);
 
-	_sparkMotor->SetInverted(true);
-	_talonMotor->SetInverted(false);
+	//	_sparkMotor->SetInverted(true);
+	_talonMotorL->SetInverted(true);
+	_talonMotorR->SetInverted(false);
+	_victorMotorL->SetInverted(true);
+	_victorMotorR->SetInverted(false);
 }
 
 void Robot::RobotPeriodic() {}
 
-// Dissabled Robot Logic
+// Disabled Robot Logic
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
 
@@ -44,30 +51,43 @@ void Robot::TeleopPeriodic() {
 	dt = currentTime - lastTimeStamp;
 
 	//motor examples
-	sparkSpeed = xbox->GetY(hand::kLeftHand);
-	_sparkMotor->Set(sparkSpeed);
+	//	sparkSpeed = xbox->GetY(hand::kLeftHand);
+	//	_sparkMotor->Set(sparkSpeed);
 
 
-	talonSpeed = xbox->GetTriggerAxis(hand::kRightHand);
-	if (talonSpeed >= deadzone) { //acounts for the deadzone
-		_talonMotor->Set(talonSpeed);
+	dbLeftspeed = xbox->GetY(hand::kLeftHand); //Sets the speed of the left db motor to the xbox left stick
+	if (abs(dbLeftspeed) >= deadzone) {
+		_talonMotorL->Set(dbLeftspeed);
+		_victorMotorL->Set(dbLeftspeed);
 	} else {
-		_talonMotor->Set(0);
+		_talonMotorL->Set(0);
+		_victorMotorL->Set(0);
 	}
 
-	// ^ the equivilant using a conditional statement 
+	dbRightspeed = xbox->GetY(hand::kRightHand); //Sets the speed of the right db motor to the xbox left stick
+	if (abs(dbRightspeed) >= deadzone) {
+		_talonMotorR->Set(dbRightspeed);
+		_victorMotorR->Set(dbRightspeed);
+	} else {
+		_talonMotorR->Set(0);
+		_victorMotorR->Set(0);
+	}
+	
+
+	// ^ the equivalent using a conditional statement 
 	//talonSpeed = xbox->GetTriggerAxis(hand::kRightHand) > deadzone ? xbox->GetTriggerAxis(hand::kRightHand) : 0; _talonMotor->Set(talonSpeed);
 
-	if(xbox->GetXButton()) {
-		_solenoid.SetTarget(wml::actuators::BinaryActuatorState::kForward);
-	} else {
-		_solenoid.SetTarget(wml::actuators::BinaryActuatorState::kReverse);
-	}
 
-	_compressor.Update(dt);
-	_solenoid.Update(dt);
+	//	if(xbox->GetXButton()) {
+	//		_solenoid.SetTarget(wml::actuators::BinaryActuatorState::kForward);
+	//	} else {
+	//		_solenoid.SetTarget(wml::actuators::BinaryActuatorState::kReverse);
+	//	}
 
-	if (_solenoid.IsDone()) _solenoid.Stop();
+	//	_compressor.Update(dt);
+	//	_solenoid.Update(dt);
+
+	//	if (_solenoid.IsDone()) _solenoid.Stop();
 	lastTimeStamp = currentTime;
 }
 

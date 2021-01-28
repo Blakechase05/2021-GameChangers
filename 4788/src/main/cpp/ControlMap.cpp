@@ -22,23 +22,16 @@ const double ControlMap::TriggerDeadzone = 0.15;
 // PCMs
 const int ControlMap::PCModule = 1;
 
-// Left Drive
-const int ControlMap::FLport = 12;
-const int ControlMap::BLport = 13;
+// Intake
+const int ControlMap::intakePort = 99;
+const int ControlMap::intakeSolenoidPort1 = 0;
+const int ControlMap::intakeSolenoidPort2 = 1;
+const int ControlMap::intakeEncoderTicks = 2048;
+const double ControlMap::IntakeAutoSpeed = 0.3;
 
-// Right Drive
-const int ControlMap::FRport = 10;
-const int ControlMap::BRport = 11;
+// ------------------ Controls ------------------
 
-// Drivetrain speed
-const double ControlMap::MaxDrivetrainSpeed = 0.8;
-
-// Robot Values
-const double ControlMap::TrackWidth = 0.56;
-const double ControlMap::TrackDepth = 0.60;
-const double ControlMap::WheelRadius = 0.0762; // In meters
-const double ControlMap::Mass = 50; // KG's
-
-// ------------------ Values ------------------
-const tAxis ControlMap::DrivetrainLeft{ Driver, XboxController::kLeftYAxis };
-const tAxis ControlMap::DrivetrainRight{ Driver, XboxController::kRightYAxis };
+// Intake
+const tAxis ControlMap::Intake{ Driver, XboxController::kRightThrottle };
+const tAxis ControlMap::Outake{ Driver, XboxController::kLeftThrottle };
+const tButton ControlMap::DeployIntake{ Driver, XboxController::kA };

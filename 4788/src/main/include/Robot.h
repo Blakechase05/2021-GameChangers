@@ -7,6 +7,10 @@
 #include "strategies/DriveSystem.h"
 
 
+// Subsystems
+#include "strategies/IntakeStrategies.h"
+
+
 class Robot : public frc::TimedRobot, protected wml::StrategyController, protected wml::NTProvider {
  public:
 	void RobotInit() override;
@@ -25,7 +29,7 @@ class Robot : public frc::TimedRobot, protected wml::StrategyController, protect
 	void TestPeriodic() override;
 
  private:
-	// Istances
+	// Instances
 	RobotMap robotMap;
-	wml::Drivetrain *drivetrain; // WML drivetrain (Not local)
+	Intake *intake; // Intake
 };

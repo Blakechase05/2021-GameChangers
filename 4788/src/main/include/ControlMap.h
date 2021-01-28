@@ -30,14 +30,15 @@ struct ControlMap {
 	// PCM1
 	static const int PCModule;
 
-	// Drive System
-	static const int FLport, FRport, BLport, BRport;
-	static const double MaxDrivetrainSpeed;
-	static const double TrackWidth, TrackDepth, WheelRadius, Mass;
+	// Intake System
+	static const int intakePort, intakeSolenoidPort1, intakeSolenoidPort2, intakeEncoderTicks;
+	static const double IntakeAutoSpeed;
 
 
 	// ------------------ Controls ------------------
 	
-	// Drivetrain
-	static const wml::controllers::tAxis DrivetrainLeft, DrivetrainRight;
+	// Intake
+	static const wml::controllers::tAxis Intake;
+	static const wml::controllers::tAxis Outake;
+	static const wml::controllers::tButton DeployIntake;
 };

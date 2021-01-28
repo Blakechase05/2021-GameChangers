@@ -70,24 +70,14 @@ struct RobotMap {
 	wml::controllers::XboxController xbox2{ ControlMap::Xbox2Port };
 	wml::controllers::SmartControllerGroup contGroup{ xbox1, xbox2};
 
-	struct DriveSystem {
+	struct IntakeSystem {
+		// Motors
+		wml::TalonSrx motor {ControlMap::intakePort, ControlMap::intakeEncoderTicks};
+		wml::actuators::MotorVoltageController motorGroup = wml::actuators::MotorVoltageController::Group(motor);
 
-		// Drive motors {port, encoderTicks}
-		wml::TalonSrx FL{ControlMap::FLport, 2048}, FR{ControlMap::FRport, 2048}, BL{ControlMap::BLport}, BR{ControlMap::BRport};
+		wml::Gearbox intakeGearbox{ &motorGroup, &motor };
 
-		// Motor Grouping
-		wml::actuators::MotorVoltageController leftMotors = wml::actuators::MotorVoltageController::Group(FL, BL);
-		wml::actuators::MotorVoltageController rightMotors = wml::actuators::MotorVoltageController::Group(FR, BR);
-
-		// Gearboxes
-		wml::Gearbox LGearbox{&leftMotors, &FL};
-		wml::Gearbox RGearbox{&rightMotors, &FR};
-
-		wml::sensors::NavX navx{};
-		wml::sensors::NavXGyro gyro{navx.Angular(wml::sensors::AngularAxis::YAW)};
-
-		wml::DrivetrainConfig drivetrainConfig{LGearbox, RGearbox, &gyro, ControlMap::TrackWidth, ControlMap::TrackDepth, ControlMap::WheelRadius, ControlMap::Mass};
-		wml::control::PIDGains gainsVelocity{"Drivetrain Velocity", 1};
-		wml::Drivetrain drivetrain{drivetrainConfig, gainsVelocity};
-	}; DriveSystem driveSystem;
+		// solenoids
+		wml::actuators::DoubleSolenoid intakeDown{ ControlMap::PCModule, ControlMap::intakeSolenoidPort1, ControlMap::intakeSolenoidPort2, 0.1 };
+	}; IntakeSystem intakeSystem;
 };

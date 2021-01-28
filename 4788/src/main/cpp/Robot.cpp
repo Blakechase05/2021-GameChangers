@@ -7,39 +7,25 @@ double currentTimeStamp;
 double lastTimeStamp;
 double dt;
 
-// Robot Logic
+// Robot Logiccd
 void Robot::RobotInit() {
-
 	// Init the controllers
 	ControlMap::InitsmartControllerGroup(robotMap.contGroup);
 
-	// Create wml drivetrain
-	drivetrain = new Drivetrain(robotMap.driveSystem.drivetrainConfig, robotMap.driveSystem.gainsVelocity);
+	intake = new Intake(robotMap.intakeSystem.intakeGearbox, robotMap.intakeSystem.intakeDown);
 
-	
-	
-	// Zero Encoders
-	robotMap.driveSystem.drivetrain.GetConfig().leftDrive.encoder->ZeroEncoder();
-	robotMap.driveSystem.drivetrain.GetConfig().rightDrive.encoder->ZeroEncoder();
+	intake->SetDefault(std::make_shared<IntakeManualStrategy>("Intake Manual", *intake, robotMap.contGroup));
 
-	// Strategy controllers (Set default strategy for drivetrain to be Manual)
-	drivetrain->SetDefault(std::make_shared<DrivetrainManual>("Drivetrain Manual", *drivetrain, robotMap.contGroup));
-	drivetrain->StartLoop(100);
-
-	// Inverts one side of our drivetrain
-	drivetrain->GetConfig().rightDrive.transmission->SetInverted(true);
-	drivetrain->GetConfig().leftDrive.transmission->SetInverted(false);
-
-	// Register our systems to be called via strategy
-	StrategyController::Register(drivetrain);
-	NTProvider::Register(drivetrain);
+	StrategyController::Register(intake);
 }
 
 void Robot::RobotPeriodic() {
 	currentTimeStamp = Timer::GetFPGATimestamp();
 	dt = currentTimeStamp - lastTimeStamp;
 
+	// Update our controllers and strategy
 	StrategyController::Update(dt);
+	intake->update(dt);
 	NTProvider::Update();
 
 	lastTimeStamp = currentTimeStamp;
@@ -50,12 +36,14 @@ void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
 
 // Auto Robot Logic
-void Robot::AutonomousInit() {}
+void Robot::AutonomousInit() {
+	Schedule(std::make_shared<IntakeAutoStrategy>("Intake Auto", *intake, robotMap.contGroup), true);
+}
 void Robot::AutonomousPeriodic() {}
 
 // Manual Robot Logic
 void Robot::TeleopInit() {
-	Schedule(drivetrain->GetDefaultStrategy(), true); // Use manual strategy
+	Schedule(intake->GetDefaultStrategy(), true); // Use default manual strategy for intake
 }
 void Robot::TeleopPeriodic() {}
 
